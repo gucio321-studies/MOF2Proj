@@ -1,7 +1,7 @@
 [project]
-name = "dummy"
+name = "MOF2Proj"
 version = "0.1.0"
-description = "Add your description here"
+description = "Matematyczne metody fizyki 2 projekt"
 readme = "README.md"
 authors = [
     { name = "gucio321", email = "73652197+gucio321@users.noreply.github.com" }
@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-dummy = "dummy:main"
+mof2proj = "mof2proj:main"
 
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]
