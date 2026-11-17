@@ -11,7 +11,7 @@ class Mapper:
         """
         return np.sum(
             [
-                self.data.nodes[self.data.nodesMap[k, i].astype(int)][0]
+                self.data.nodes[self.data.nodesMap[k, i].astype(int), 0]
                 * Mapper.gi(i=i, ksi=ksi)
                 for i in range(4)
             ]
@@ -23,7 +23,7 @@ class Mapper:
         """
         return np.sum(
             [
-                self.data.nodes[self.data.nodesMap[k, i].astype(int)][1]
+                self.data.nodes[self.data.nodesMap[k, i].astype(int), 1]
                 * Mapper.gi(i=i, ksi=ksi)
                 for i in range(4)
             ]
@@ -63,3 +63,13 @@ class Mapper:
     @staticmethod
     def f2(epsilon):
         return (1 + epsilon) / 2
+
+    @staticmethod
+    def q1(ksi):
+        return ksi*(ksi-1)/2
+    @staticmethod
+    def q2(ksi):
+        return (1-ksi)*(ksi+1)/2
+    @staticmethod
+    def q2(ksi):
+        return (ksi)*(ksi+1)/2
