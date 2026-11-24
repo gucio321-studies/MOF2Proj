@@ -7,7 +7,7 @@ class Task():
         self.mapper = mes.Mapper(data=self.data)
 
     def __call__(self):
-        self.task2()
+        self.task3()
 
     def task1(self):
         plt.plot(self.data.nodes[:,0], self.data.nodes[:,1], marker='o', linestyle='')
@@ -15,4 +15,9 @@ class Task():
     def task2(self):
         v=self.data.V(5)
         plt.scatter(self.data.nodes[:,0], self.data.nodes[:,1], c=v)
+        plt.show()
+    def task3(self):
+        t = self.mapper.t()
+        print(t)
+        plt.imshow(t)
         plt.show()
