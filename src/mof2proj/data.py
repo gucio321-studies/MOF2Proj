@@ -15,6 +15,8 @@ class Data:
             nodesPos["indeks brzegu"],
         ))
 
+        self.N = len(self.nodes)
+
         nodesMap = pandas.read_csv(nodesMapFilePath, sep="\\s\\s+", engine="python")
         ni = 9  # TODO: this is hardcoded but probably should not be
         self.nodesMap = np.zeros((int(len(nodesMap['nr elementu "m"']) / ni), ni))
@@ -25,6 +27,7 @@ class Data:
             nodesMap['globalny numer węzła "nlg(m,i)"'] - 1
         )
 
+        self.M = self.nodesMap.shape[0]
     def V(self, vmax):
         result = np.full(self.nodes.shape[0], None)
         bottom = np.where(self.nodes[:,2]==2)

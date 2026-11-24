@@ -92,7 +92,7 @@ class Mapper:
 
     @staticmethod
     def q2(ksi):
-        return (1 - ksi) * (ksi + 1) / 2
+        return (1 - ksi) * (ksi + 1)
 
     @staticmethod
     def q3(ksi):
@@ -169,8 +169,7 @@ class Mapper:
                         self.w(l)
                         * self.w(n)
                         * (
-                            self.dhidksi1(j=j, l=l, n=n)
-                            * self.dhidksi1(j=i, l=l, n=n)
+                            self.dhidksi1(j=j, l=l, n=n) * self.dhidksi1(j=i, l=l, n=n)
                             + self.dhidksi2(j=j, l=l, n=n)
                             * self.dhidksi2(j=i, l=l, n=n)
                         )
@@ -180,5 +179,17 @@ class Mapper:
                 for l in range(4)
             ]
         )
+
     def t(self):
         return np.array([[self.tij(i=i, j=j) for i in range(9)] for j in range(9)])
+
+    def T(self):
+        result = np.zeros((self.data.N, self.data.N))
+        for i in range(self.data.M):
+            for i1 in range(9):
+                for i2 in range(9):
+                    result[
+                        self.data.nodesMap[i, i1].astype(int),
+                        self.data.nodesMap[i, i2].astype(int),
+                    ] += self.tij(i=i1, j=i2)
+        return result
