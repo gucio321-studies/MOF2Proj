@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.tri as mtri
+import matplotlib.pyplot as plt
 
 
 class Mapper:
@@ -208,3 +210,107 @@ class Mapper:
         T = self.T_with_BC()
         d = np.linalg.solve(T, p)
         return d
+
+    def plot_cross_sections(self, a):
+        data = self.data
+        d = self.solve()
+
+        # Współrzędne węzłów
+        x = data.nodes[:, 0]
+        y = data.nodes[:, 1]
+
+        # Dolna elektroda: indeks brzegu == 2
+        bottom = np.where(data.nodes[:, 2] == 2)[0]
+        y_bottom = np.min(y[bottom])
+
+        # Podział każdego elementu 9-węzłowego na 8 trójkątów
+        triangles = []
+        # Kolejność węzłów na obwodzie elementu:
+        # dolny-lewy, dolny-środek, dolny-prawy,
+        # prawy-środek, górny-prawy, górny-środek,
+        # górny-lewy, lewy-środek
+        ring = [0, 4, 1, 5, 3, 7, 2, 6]
+
+        for element in range(data.M):
+            nodes = data.nodesMap[element].astype(int)
+            center = nodes[8]
+
+            for i in range(8):
+                triangles.append([
+                    nodes[ring[i]],
+                    nodes[ring[(i + 1) % 8]],
+                    center
+                ])
+
+        triangulation = mtri.Triangulation(
+            x, y, np.array(triangles)
+        )
+    
+        # Interpolacja rozwiązania
+        interpolator = mtri.LinearTriInterpolator(
+            triangulation, d
+        )
+    
+        # Granice pudełka
+        xmin, xmax = np.min(x), np.max(x)
+        ymin, ymax = np.min(y), np.max(y)
+    
+        x_values = np.linspace(xmin, xmax, 500)
+    
+        fig, ax = plt.subplots(figsize=(9, 5))
+    
+        for distance in [a, 2*a]:
+            y_section = y_bottom + distance
+    
+            values = interpolator(
+                x_values,
+                np.full_like(x_values, y_section)
+            )
+    
+            ax.plot(
+                x_values,
+                values,
+                label=f"y = y_bottom + {distance / a:.0f}a"
+            )
+    
+        ax.set_xlabel("x [nm]")
+        ax.set_ylabel("d")
+        ax.set_title("Przekroje poziome rozwiązania")
+        ax.grid(True)
+        ax.legend()
+        plt.tight_layout()
+        plt.show()
+    
+        x_center = (xmin + xmax) / 2
+    
+        x_sections = [
+            (x_center, "Środek pudełka"),
+            (9, "x = 9 nm"),
+            (50, "x = 50 nm"),
+            (90, "x = 90 nm")
+        ]
+    
+        y_values = np.linspace(ymin, ymax, 500)
+    
+        fig, ax = plt.subplots(figsize=(9, 5))
+    
+        for x_section, label in x_sections:
+            values = interpolator(
+                np.full_like(y_values, x_section),
+                y_values
+            )
+    
+            ax.plot(
+                y_values,
+                values,
+                label=label
+            )
+    
+        ax.set_xlabel("y [nm]")
+        ax.set_ylabel("d")
+        ax.set_title("Przekroje pionowe rozwiązania")
+        ax.grid(True)
+        ax.legend()
+        plt.tight_layout()
+        plt.show()
+    

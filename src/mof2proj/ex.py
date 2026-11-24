@@ -7,7 +7,7 @@ class Task():
         self.mapper = mes.Mapper(data=self.data)
 
     def __call__(self):
-        self.task6()
+        self.task7()
 
     def task1(self):
         plt.plot(self.data.nodes[:,0], self.data.nodes[:,1], marker='o', linestyle='')
@@ -30,6 +30,7 @@ class Task():
         plt.imshow(T)
         plt.show()
     def task6(self):
-        
         plt.scatter(self.data.nodes[:,0], self.data.nodes[:,1], c=self.mapper.solve())
         plt.show()
+    def task7(self):
+        self.mapper.plot_cross_sections(.45)
