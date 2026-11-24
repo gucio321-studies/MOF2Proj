@@ -192,4 +192,19 @@ class Mapper:
                         self.data.nodesMap[i, i1].astype(int),
                         self.data.nodesMap[i, i2].astype(int),
                     ] += self.tij(i=i1, j=i2)
+
         return result
+    def T_with_BC(self):
+        T = self.T().copy()
+        boundary = np.where(self.data.nodes[:,2]!=0)
+        T[boundary, :] = 0
+        T[boundary, boundary] = 1
+        return T
+
+    def solve(self):
+        p = self.data.V(vmax=100e-3)
+        p[p==None] = 0
+        p = p.astype(float)
+        T = self.T_with_BC()
+        d = np.linalg.solve(T, p)
+        return d
